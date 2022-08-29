@@ -2,6 +2,7 @@ CMD_DIR=./cmd/goenum
 
 GO_FILES:=$(shell find . -name '*.go')
 MOD_FILES:=go.mod go.sum
+TEMPLATE_FILES:=$(shell find ./templates/template -type f -name '*.tmpl')
 
 TARGET_DIR=bin
 TARGET=$(TARGET_DIR)/goenum
@@ -13,7 +14,7 @@ default: $(TARGET)
 $(TARGET_DIR):
 	mkdir -p $(TARGET_DIR)
 
-$(TARGET): $(GO_FILES) $(MOD_FILES) $(TARGET_DIR)
+$(TARGET): $(GO_FILES) $(MOD_FILES) $(TEMPLATE_FILES) $(TARGET_DIR)
 	go build -o $(TARGET) $(CMD_DIR)
 
 install: $(TARGET)

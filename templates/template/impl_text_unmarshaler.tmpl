@@ -1,0 +1,13 @@
+{{define `impl_text_unmarshaler`}}func (e *{{.Name}}) UnmarshalText(text []byte) error {
+	name := string(text)
+	val, ok := {{unexported .Name}}Value[name]
+	if !ok {
+		return &Invalid{{.Name}}NameError{
+			Name: name,
+		}
+	}
+
+	*e = val
+	return nil
+}
+{{end}}

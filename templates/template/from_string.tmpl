@@ -1,0 +1,11 @@
+{{define `from_string`}}func FromString(name string) ({{.Name}}, error) {
+	val, ok := {{unexported .Name}}Value[name]
+	if !ok {
+		return {{.Name}}(0), &Invalid{{.Name}}NameError{
+			Name: name,
+		}
+	}
+
+	return val, nil
+}
+{{end}}

@@ -1,6 +1,7 @@
 package finder
 
 import (
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -9,6 +10,7 @@ import (
 )
 
 type valueParser struct {
+	pkgName     string
 	values      map[string][]*ast.ValueSpec
 	currentType *ast.Ident
 }
@@ -70,7 +72,7 @@ func (p *valueParser) specByName(name string) (*model.EnumSpec, error) {
 		return nil, fmt.Errorf("could not find any constant decls for %q", name)
 	}
 
-	spec := &model.EnumSpec{Name: name}
+	spec := &model.EnumSpec{Name: name, Package: p.pkgName}
 	variants := []model.Variant{}
 	for _, val := range vals {
 		for _, ident := range val.Names {
@@ -108,7 +110,12 @@ func New(name string) *EnumFinder {
 
 // FindFromFiles extraces the EnumSpec from the provided files.
 func (finder *EnumFinder) FindFromFiles(fs []*ast.File) (*model.EnumSpec, error) {
+	if len(fs) == 0 {
+		return nil, errors.New("at least 1 file must be provided")
+	}
+
 	p := new(valueParser)
+	p.pkgName = fs[0].Name.Name
 
 	// TODO: make sure type is numeric.
 	for _, f := range fs {

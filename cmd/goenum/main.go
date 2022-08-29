@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/ShawnROGrady/goenum/finder"
+	"github.com/ShawnROGrady/goenum/generator"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -53,5 +54,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("%#v\n", spec)
+	generator := generator.New(spec)
+	if err := generator.Generate(os.Stdout); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to generate: %v\n", err)
+		os.Exit(1)
+	}
 }

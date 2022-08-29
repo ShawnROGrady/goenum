@@ -1,0 +1,4 @@
+{{define `enum_name`}}var {{unexported .Name}}Name = map[{{.Name}}]string{ {{range .Variants}}
+	{{.GoName}}: {{printf "%q" .String}},{{end}}
+}
+{{end}}

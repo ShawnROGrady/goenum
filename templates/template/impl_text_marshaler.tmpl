@@ -1,0 +1,4 @@
+{{define `impl_text_marshaler`}}func (e {{.Name}}) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+{{end}}

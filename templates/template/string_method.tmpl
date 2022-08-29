@@ -1,0 +1,4 @@
+{{define `string_method`}}func (e {{.Name}}) String() string {
+	return {{unexported .Name}}Name[e]
+}
+{{end}}
