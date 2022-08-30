@@ -1,11 +1,20 @@
-{{define `from_string`}}func FromString(name string) ({{.Name}}, error) {
-	val, ok := {{unexported .Name}}Value[name]
+{{define `from_string_body`}}val, ok := {{unexported .Name}}Value[name]
 	if !ok {
 		return {{.Name}}(0), &Invalid{{.Name}}NameError{
 			Name: name,
 		}
 	}
 
-	return val, nil
+	return val, nil{{end}}
+
+{{define `from_string_no_prefix`}}func FromString(name string) ({{.Name}}, error) {
+	{{template `from_string_body` .}}
 }
 {{end}}
+
+{{define `from_string_with_prefix`}}func {{.Name}}FromString(name string) ({{.Name}}, error) {
+	{{template `from_string_body` .}}
+}
+{{end}}
+
+{{define `from_string`}}{{if .ExcludePrefix}}{{template `from_string_no_prefix` .Enum}}{{else}}{{template `from_string_with_prefix` .Enum}}{{end}}{{end}}

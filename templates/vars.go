@@ -100,8 +100,8 @@ func WriteInvalidNameError(w io.Writer, enumSpec *model.EnumSpec) error {
 	return invalidNameErrorTemplate.ExecuteTemplate(w, "invalid_name_error", enumSpec)
 }
 
-func WriteFromString(w io.Writer, enumSpec *model.EnumSpec) error {
-	return fromStringTemplate.ExecuteTemplate(w, "from_string", enumSpec)
+func WriteFromString(w io.Writer, params *FromStringParams) error {
+	return fromStringTemplate.ExecuteTemplate(w, "from_string", params)
 }
 
 func WriteImplTextMarshaler(w io.Writer, enumSpec *model.EnumSpec) error {

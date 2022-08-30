@@ -49,7 +49,14 @@ func (g *Generator) writeInvalidNameError(dst io.Writer) error {
 }
 
 func (g *Generator) writeFromString(dst io.Writer) error {
-	if err := templates.WriteFromString(dst, g.spec); err != nil {
+	params := &templates.FromStringParams{
+		Enum: g.spec,
+	}
+
+	// TODO: allow this to be customized.
+	params.ExcludePrefix = true
+
+	if err := templates.WriteFromString(dst, params); err != nil {
 		return fmt.Errorf("writeFromString: %w", err)
 	}
 
@@ -80,6 +87,14 @@ func (g *Generator) writeHeader(dst io.Writer) error {
 	return nil
 }
 
+func writeLine(dst io.Writer) error {
+	if _, err := dst.Write([]byte("\n")); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (g *Generator) Generate(dst io.Writer) error {
 	fns := []func(io.Writer) error{
 		g.writeHeader,
@@ -92,7 +107,13 @@ func (g *Generator) Generate(dst io.Writer) error {
 		g.writeImplTextUnmarshaler,
 	}
 
-	for _, fn := range fns {
+	for i, fn := range fns {
+		if i != 0 {
+			if err := writeLine(dst); err != nil {
+				return err
+			}
+		}
+
 		if err := fn(dst); err != nil {
 			return err
 		}
