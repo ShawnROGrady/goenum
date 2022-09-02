@@ -8,8 +8,7 @@ import (
 	"go/token"
 	"os"
 
-	"github.com/ShawnROGrady/goenum/finder"
-	"github.com/ShawnROGrady/goenum/generator"
+	"github.com/ShawnROGrady/goenum"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -40,22 +39,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	pkg, err := packages.Load(loadPkgConf, pkgPath)
+	pkgs, err := packages.Load(loadPkgConf, pkgPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to load package %q: %v\n", pkgPath, err)
 		os.Exit(1)
 	}
 
-	enumFinder := finder.New(*typeName)
-
-	spec, err := enumFinder.FindFromFiles(pkg[0].Syntax)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to parse: %v\n", err)
-		os.Exit(1)
-	}
-
-	generator := generator.New(spec)
-	if err := generator.Generate(os.Stdout); err != nil {
+	if err := goenum.NewGenerator(*typeName).Run(os.Stdout, pkgs[0]); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to generate: %v\n", err)
 		os.Exit(1)
 	}
