@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/ShawnROGrady/goenum"
+	"github.com/stretchr/testify/assert"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -102,7 +103,10 @@ func runGeneratorTest(t testing.TB, typeName string, inputFile *ast.File, expect
 		t.Fatalf("failed to generate: %v", err)
 	}
 
-	if dst.String() != string(expectedOutput) {
-		t.Errorf("generated:\n%s\n\nwant:\n%s", dst.String(), expectedOutput)
-	}
+	/*
+		if dst.String() != string(expectedOutput) {
+			t.Errorf("generated:\n%s\n\nwant:\n%s", dst.String(), expectedOutput)
+		}
+	*/
+	assert.Equal(t, string(expectedOutput), dst.String())
 }

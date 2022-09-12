@@ -15,7 +15,8 @@ var (
 	enumNameTemplate = template.Must(
 		template.New("enumNameTemplate").
 			Funcs(template.FuncMap{
-				"unexported": unexported,
+				"unexported":    unexported,
+				"paddedGoNames": paddedGoNames,
 			}).
 			ParseFS(templateContents,
 				"template/enum_name.tmpl",
@@ -25,7 +26,8 @@ var (
 	enumValueTemplate = template.Must(
 		template.New("enumValueTemplate").
 			Funcs(template.FuncMap{
-				"unexported": unexported,
+				"unexported":    unexported,
+				"paddedStrings": paddedStrings,
 			}).
 			ParseFS(templateContents,
 				"template/enum_value.tmpl",

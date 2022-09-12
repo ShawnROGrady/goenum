@@ -4,17 +4,17 @@ package testenums
 
 import "fmt"
 
-var animalName = map[Animal]string{ 
-	Dog: "Dog",
-	Cat: "Cat",
-	Bird: "Bird",
+var animalName = map[Animal]string{
+	Dog:     "Dog",
+	Cat:     "Cat",
+	Bird:    "Bird",
 	Giraffe: "Giraffe",
 }
 
-var animalValue = map[string]Animal{ 
-	"Dog": Dog,
-	"Cat": Cat,
-	"Bird": Bird,
+var animalValue = map[string]Animal{
+	"Dog":     Dog,
+	"Cat":     Cat,
+	"Bird":    Bird,
 	"Giraffe": Giraffe,
 }
 
