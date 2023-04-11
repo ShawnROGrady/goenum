@@ -66,6 +66,7 @@ func TestGenerateSuccess(t *testing.T) {
 		typeName       string
 		inputFile      *ast.File
 		expectedOutput []byte
+		generatorOpts  []goenum.GeneratorOpt
 	}{
 		"animal": {
 			typeName: "Animal",
@@ -85,6 +86,18 @@ func TestGenerateSuccess(t *testing.T) {
 				t, "testdata/good/contact_method_out.go",
 			),
 		},
+		"contact_method2": {
+			typeName: "PreferredContactMethod",
+			inputFile: readAndParseTestData(
+				t, "testdata/good/contact_method2.go",
+			),
+			expectedOutput: readTestData(
+				t, "testdata/good/contact_method2_out.go",
+			),
+			generatorOpts: []goenum.GeneratorOpt{
+				goenum.WithDefaultAsEmptyString(),
+			},
+		},
 	}
 
 	for testName, testCase := range testCases {
@@ -92,6 +105,7 @@ func TestGenerateSuccess(t *testing.T) {
 			runGeneratorTest(
 				t,
 				testCase.typeName,
+				testCase.generatorOpts,
 				testCase.inputFile,
 				testCase.expectedOutput,
 			)
@@ -99,12 +113,12 @@ func TestGenerateSuccess(t *testing.T) {
 	}
 }
 
-func runGeneratorTest(t testing.TB, typeName string, inputFile *ast.File, expectedOutput []byte) {
+func runGeneratorTest(t testing.TB, typeName string, generatorOpts []goenum.GeneratorOpt, inputFile *ast.File, expectedOutput []byte) {
 	t.Helper()
 
 	var dst bytes.Buffer
 
-	generator := goenum.NewGenerator(typeName)
+	generator := goenum.NewGenerator(typeName, generatorOpts...)
 
 	if err := generator.Run(&dst, &packages.Package{
 		Syntax: []*ast.File{inputFile},
@@ -112,10 +126,5 @@ func runGeneratorTest(t testing.TB, typeName string, inputFile *ast.File, expect
 		t.Fatalf("failed to generate: %v", err)
 	}
 
-	/*
-		if dst.String() != string(expectedOutput) {
-			t.Errorf("generated:\n%s\n\nwant:\n%s", dst.String(), expectedOutput)
-		}
-	*/
 	assert.Equal(t, string(expectedOutput), dst.String())
 }

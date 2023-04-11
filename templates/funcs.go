@@ -41,8 +41,8 @@ func paddedGoNames(rawVariants []model.Variant) []model.Variant {
 			normalized.GoName += strings.Repeat(" ", padding)
 		}
 
-		if normalized.EnumName == "" {
-			normalized.EnumName = rawVariant.GoName
+		if normalized.EnumName == nil {
+			normalized.EnumName = &rawVariant.GoName
 		}
 
 		return normalized
@@ -66,19 +66,24 @@ func paddedStrings(rawVariants []model.Variant) []model.Variant {
 
 	normalizeVariant := func(rawVariant model.Variant) model.Variant {
 		normalized := rawVariant
+		var normalizedEnumName string
 
-		if normalized.EnumName == "" {
-			normalized.EnumName = rawVariant.GoName
+		if normalized.EnumName == nil {
+			normalizedEnumName = rawVariant.GoName
+		} else {
+			normalizedEnumName = *normalized.EnumName
 		}
 
-		padding := maxLen - len(normalized.EnumName)
+		padding := maxLen - len(normalizedEnumName)
 
-		normalized.EnumName = fmt.Sprintf("%q", normalized.EnumName)
-		normalized.EnumName += ":"
+		normalizedEnumName = fmt.Sprintf("%q", normalizedEnumName)
+		normalizedEnumName += ":"
 
 		if padding != 0 {
-			normalized.EnumName += strings.Repeat(" ", padding)
+			normalizedEnumName += strings.Repeat(" ", padding)
 		}
+
+		normalized.EnumName = &normalizedEnumName
 
 		return normalized
 	}

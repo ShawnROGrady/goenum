@@ -10,14 +10,15 @@ type EnumSpec struct {
 // Variant describes an enum variant.
 type Variant struct {
 	GoName   string
-	EnumName string
+	EnumName *string
+	Data     any
 
 	// TODO: synonyms?
 }
 
 func (v *Variant) String() string {
-	if v.EnumName != "" {
-		return v.EnumName
+	if v.EnumName != nil {
+		return *v.EnumName
 	}
 
 	return v.GoName

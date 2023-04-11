@@ -78,18 +78,24 @@ func (p *valueParser) specByName(name string) (*model.EnumSpec, error) {
 	spec := &model.EnumSpec{Name: name, Package: p.pkgName}
 	variants := []model.Variant{}
 	for _, val := range vals {
-		var enumName string
+		var enumName *string
 		if val.Comment != nil {
 			matches := enumNameRe.FindAllStringSubmatch(val.Comment.List[0].Text, -1)
 			if len(matches) != 0 {
-				enumName = matches[0][1]
+				enumName = &matches[0][1]
 			}
 		}
 
 		for _, ident := range val.Names {
+			var data any
+			if ident.Obj != nil {
+				data = ident.Obj.Data
+			}
+
 			variants = append(variants, model.Variant{
 				GoName:   ident.Name,
 				EnumName: enumName,
+				Data:     data,
 			})
 		}
 	}

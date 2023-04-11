@@ -10,11 +10,33 @@ import (
 )
 
 type Generator struct {
-	typeName string
+	typeName             string
+	defaultAsEmptyString bool
 }
 
-func NewGenerator(typeName string) *Generator {
-	return &Generator{typeName: typeName}
+type GeneratorOpt interface {
+	apply(*Generator)
+}
+
+type generatorOptFn func(*Generator)
+
+func (fn generatorOptFn) apply(g *Generator) {
+	fn(g)
+}
+
+func WithDefaultAsEmptyString() GeneratorOpt {
+	return generatorOptFn(func(g *Generator) {
+		g.defaultAsEmptyString = true
+	})
+}
+
+func NewGenerator(typeName string, opts ...GeneratorOpt) *Generator {
+	g := &Generator{typeName: typeName}
+	for _, opt := range opts {
+		opt.apply(g)
+	}
+
+	return g
 }
 
 func (g *Generator) Run(out io.Writer, pkg *packages.Package) error {
@@ -23,6 +45,15 @@ func (g *Generator) Run(out io.Writer, pkg *packages.Package) error {
 	spec, err := enumFinder.FindFromFiles(pkg.Syntax)
 	if err != nil {
 		return fmt.Errorf("find enum: %w", err)
+	}
+
+	if g.defaultAsEmptyString {
+		empty := ""
+		for i := range spec.Variants {
+			if spec.Variants[i].Data == 0 {
+				spec.Variants[i].EnumName = &empty
+			}
+		}
 	}
 
 	generator := generator.New(spec)
