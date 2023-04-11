@@ -14,7 +14,8 @@ import (
 
 func main() {
 	var (
-		typeName = flag.String("type", "", "name of the type to generate enum boilerplate for")
+		typeName             = flag.String("type", "", "name of the type to generate enum boilerplate for")
+		defaultAsEmptyString = flag.Bool("default-as-empty-string", false, "treat the default value as an empty string")
 	)
 
 	flag.Parse()
@@ -45,7 +46,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := goenum.NewGenerator(*typeName).Run(os.Stdout, pkgs[0]); err != nil {
+	var generatorOpts []goenum.GeneratorOpt
+	if *defaultAsEmptyString {
+		generatorOpts = append(generatorOpts, goenum.WithDefaultAsEmptyString())
+	}
+
+	if err := goenum.NewGenerator(*typeName, generatorOpts...).Run(os.Stdout, pkgs[0]); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to generate: %v\n", err)
 		os.Exit(1)
 	}
