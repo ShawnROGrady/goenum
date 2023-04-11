@@ -76,6 +76,15 @@ func TestGenerateSuccess(t *testing.T) {
 				t, "testdata/good/animal_out.go",
 			),
 		},
+		"contact_method": {
+			typeName: "PreferredContactMethod",
+			inputFile: readAndParseTestData(
+				t, "testdata/good/contact_method.go",
+			),
+			expectedOutput: readTestData(
+				t, "testdata/good/contact_method_out.go",
+			),
+		},
 	}
 
 	for testName, testCase := range testCases {

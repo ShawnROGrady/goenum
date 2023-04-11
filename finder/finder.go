@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"regexp"
 
 	"github.com/ShawnROGrady/goenum/model"
 )
@@ -66,6 +67,8 @@ func (p *valueParser) parseGenDecl(genDecl *ast.GenDecl) {
 	p.parseSpecs(genDecl.Specs)
 }
 
+var enumNameRe = regexp.MustCompile(`//goenum:"name=([a-zA-Z0-9]+)"`)
+
 func (p *valueParser) specByName(name string) (*model.EnumSpec, error) {
 	vals, ok := p.values[name]
 	if !ok {
@@ -75,10 +78,18 @@ func (p *valueParser) specByName(name string) (*model.EnumSpec, error) {
 	spec := &model.EnumSpec{Name: name, Package: p.pkgName}
 	variants := []model.Variant{}
 	for _, val := range vals {
+		var enumName string
+		if val.Comment != nil {
+			matches := enumNameRe.FindAllStringSubmatch(val.Comment.List[0].Text, -1)
+			if len(matches) != 0 {
+				enumName = matches[0][1]
+			}
+		}
+
 		for _, ident := range val.Names {
 			variants = append(variants, model.Variant{
-				// TODO: check for EnumName.
-				GoName: ident.Name,
+				GoName:   ident.Name,
+				EnumName: enumName,
 			})
 		}
 	}

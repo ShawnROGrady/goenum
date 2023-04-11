@@ -66,11 +66,12 @@ func paddedStrings(rawVariants []model.Variant) []model.Variant {
 
 	normalizeVariant := func(rawVariant model.Variant) model.Variant {
 		normalized := rawVariant
-		padding := maxLen - len(rawVariant.GoName)
 
 		if normalized.EnumName == "" {
 			normalized.EnumName = rawVariant.GoName
 		}
+
+		padding := maxLen - len(normalized.EnumName)
 
 		normalized.EnumName = fmt.Sprintf("%q", normalized.EnumName)
 		normalized.EnumName += ":"
