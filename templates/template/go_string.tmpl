@@ -1,0 +1,9 @@
+{{define `go_string`}}func (e {{.Name}}) GoString() string {
+	switch e {{`{`}}{{$pkgName := .Package}}{{$underlyingType := .UnderlyingTypeName}}{{$typeName := .Name}}{{range .Variants}}
+	case {{.GoName}}:
+		return {{printf "\"%s.%s\"" $pkgName .GoName}}{{end}}
+	default:
+		return fmt.Sprintf({{printf "\"%s.%s(%%v)\"" $pkgName $typeName}}, {{$underlyingType}}{{"("}}e{{")"}})
+	{{`}`}}
+}
+{{end}}

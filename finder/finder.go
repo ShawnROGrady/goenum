@@ -75,7 +75,11 @@ func (p *valueParser) specByName(name string) (*model.EnumSpec, error) {
 		return nil, fmt.Errorf("could not find any constant decls for %q", name)
 	}
 
-	spec := &model.EnumSpec{Name: name, Package: p.pkgName}
+	typeIdent := vals[0].Type.(*ast.Ident)
+	typeDecl := typeIdent.Obj.Decl.(*ast.TypeSpec)
+	underlyingType := typeDecl.Type.(*ast.Ident).Name
+
+	spec := &model.EnumSpec{Name: name, Package: p.pkgName, UnderlyingTypeName: underlyingType}
 	variants := []model.Variant{}
 	for _, val := range vals {
 		var enumName *string

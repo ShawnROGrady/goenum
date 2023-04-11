@@ -87,6 +87,14 @@ func (g *Generator) writeHeader(dst io.Writer) error {
 	return nil
 }
 
+func (g *Generator) writeGoStringMethod(dst io.Writer) error {
+	if err := templates.WriteGoStringMethod(dst, g.spec); err != nil {
+		return fmt.Errorf("writeGoStringMethod: %w", err)
+	}
+
+	return nil
+}
+
 func writeLine(dst io.Writer) error {
 	if _, err := dst.Write([]byte("\n")); err != nil {
 		return err
@@ -101,6 +109,7 @@ func (g *Generator) Generate(dst io.Writer) error {
 		g.writeEnumNames,
 		g.writeEnumValues,
 		g.writeStringMethod,
+		g.writeGoStringMethod,
 		g.writeInvalidNameError,
 		g.writeFromString,
 		g.writeImplTextMarshaler,

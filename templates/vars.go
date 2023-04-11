@@ -84,6 +84,13 @@ var (
 				"template/header.tmpl",
 			),
 	)
+
+	goStringMethodTemplate = template.Must(
+		template.New("goStringMethodTemplate").
+			ParseFS(templateContents,
+				"template/go_string.tmpl",
+			),
+	)
 )
 
 func WriteEnumNames(w io.Writer, enumSpec *model.EnumSpec) error {
@@ -116,4 +123,8 @@ func WriteImplTextUnmarshaler(w io.Writer, enumSpec *model.EnumSpec) error {
 
 func WriteHeader(w io.Writer, enumSpec *model.EnumSpec) error {
 	return headerTemplate.ExecuteTemplate(w, "header", enumSpec)
+}
+
+func WriteGoStringMethod(w io.Writer, enumSpec *model.EnumSpec) error {
+	return goStringMethodTemplate.ExecuteTemplate(w, "go_string", enumSpec)
 }

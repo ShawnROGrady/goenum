@@ -22,6 +22,21 @@ func (e Animal) String() string {
 	return animalName[e]
 }
 
+func (e Animal) GoString() string {
+	switch e {
+	case Dog:
+		return "testenums.Dog"
+	case Cat:
+		return "testenums.Cat"
+	case Bird:
+		return "testenums.Bird"
+	case Giraffe:
+		return "testenums.Giraffe"
+	default:
+		return fmt.Sprintf("testenums.Animal(%v)", int(e))
+	}
+}
+
 type InvalidAnimalNameError struct {
 	Name string
 }

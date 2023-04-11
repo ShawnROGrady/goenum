@@ -22,6 +22,21 @@ func (e PreferredContactMethod) String() string {
 	return preferredContactMethodName[e]
 }
 
+func (e PreferredContactMethod) GoString() string {
+	switch e {
+	case PreferredContactMethodUnspecified:
+		return "contactmethod2.PreferredContactMethodUnspecified"
+	case ContactByEmail:
+		return "contactmethod2.ContactByEmail"
+	case ContactByCellphone:
+		return "contactmethod2.ContactByCellphone"
+	case ContactByLandLine:
+		return "contactmethod2.ContactByLandLine"
+	default:
+		return fmt.Sprintf("contactmethod2.PreferredContactMethod(%v)", int(e))
+	}
+}
+
 type InvalidPreferredContactMethodNameError struct {
 	Name string
 }

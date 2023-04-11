@@ -2,9 +2,10 @@ package model
 
 // EnumSpec describes the specification for an enum.
 type EnumSpec struct {
-	Package  string
-	Name     string
-	Variants []Variant
+	Package            string
+	Name               string
+	Variants           []Variant
+	UnderlyingTypeName string
 }
 
 // Variant describes an enum variant.
