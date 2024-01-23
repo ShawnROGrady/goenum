@@ -67,7 +67,7 @@ func (p *valueParser) parseGenDecl(genDecl *ast.GenDecl) {
 	p.parseSpecs(genDecl.Specs)
 }
 
-var enumNameRe = regexp.MustCompile(`//goenum:"name=([a-zA-Z0-9]+)"`)
+var enumNameRe = regexp.MustCompile(`//goenum:"name=([a-zA-Z0-9_]+)"`)
 
 func (p *valueParser) specByName(name string) (*model.EnumSpec, error) {
 	vals, ok := p.values[name]
