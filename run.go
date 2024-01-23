@@ -12,6 +12,8 @@ import (
 type Generator struct {
 	typeName             string
 	defaultAsEmptyString bool
+	implSqlScanner       bool
+	implSqlDriverValuer  bool
 }
 
 type GeneratorOpt interface {
@@ -30,6 +32,18 @@ func WithDefaultAsEmptyString() GeneratorOpt {
 	})
 }
 
+func ImplSqlScanner() GeneratorOpt {
+	return generatorOptFn(func(g *Generator) {
+		g.implSqlScanner = true
+	})
+}
+
+func ImplSqlDriverValuer() GeneratorOpt {
+	return generatorOptFn(func(g *Generator) {
+		g.implSqlDriverValuer = true
+	})
+}
+
 func NewGenerator(typeName string, opts ...GeneratorOpt) *Generator {
 	g := &Generator{typeName: typeName}
 	for _, opt := range opts {
@@ -37,6 +51,20 @@ func NewGenerator(typeName string, opts ...GeneratorOpt) *Generator {
 	}
 
 	return g
+}
+
+func (g *Generator) generateOpts() []generator.Opt {
+	opts := []generator.Opt{}
+
+	if g.implSqlScanner {
+		opts = append(opts, generator.ImplSqlScanner())
+	}
+
+	if g.implSqlDriverValuer {
+		opts = append(opts, generator.ImplSqlDriverValuer())
+	}
+
+	return opts
 }
 
 func (g *Generator) Run(out io.Writer, pkg *packages.Package) error {
@@ -56,7 +84,11 @@ func (g *Generator) Run(out io.Writer, pkg *packages.Package) error {
 		}
 	}
 
-	generator := generator.New(spec)
+	if g.implSqlDriverValuer {
+		spec.AdditionalImports = append(spec.AdditionalImports, "database/sql/driver")
+	}
+
+	generator := generator.New(spec, g.generateOpts()...)
 	if err := generator.Generate(out); err != nil {
 		return err
 	}

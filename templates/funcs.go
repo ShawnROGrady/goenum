@@ -2,6 +2,8 @@ package templates
 
 import (
 	"fmt"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/ShawnROGrady/goenum/model"
@@ -94,4 +96,16 @@ func paddedStrings(rawVariants []model.Variant) []model.Variant {
 	}
 
 	return normalizedVariants
+}
+
+func imports(spec model.EnumSpec) []string {
+	vs := []string{"fmt"}
+	if len(spec.AdditionalImports) != 0 {
+		vs = append(vs, spec.AdditionalImports...)
+	}
+	sort.Strings(vs)
+	for i, v := range vs {
+		vs[i] = strconv.Quote(v)
+	}
+	return vs
 }

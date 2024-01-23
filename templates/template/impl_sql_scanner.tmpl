@@ -1,0 +1,13 @@
+{{define `impl_sql_scanner`}}func (e *{{.Name}}) Scan(value interface{}) error {
+	switch src := value.(type) {
+	case nil:
+		return nil
+	case string:
+		return e.UnmarshalText([]byte(src))
+	case []byte:
+		return e.UnmarshalText(src)
+	default:
+		return fmt.Errorf("unable to scan type %T into {{.Name}}", src)
+	}
+}
+{{end}}

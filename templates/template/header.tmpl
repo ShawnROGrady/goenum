@@ -2,5 +2,8 @@
 
 package {{.Package}}
 
-import "fmt"
+{{if not .AdditionalImports}}import "fmt"{{else}}import (
+{{range (imports .)}}{{
+printf "\t%s\n" .
+}}{{end}}){{end}}
 {{end}}

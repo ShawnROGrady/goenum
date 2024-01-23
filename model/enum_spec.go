@@ -6,6 +6,7 @@ type EnumSpec struct {
 	Name               string
 	Variants           []Variant
 	UnderlyingTypeName string
+	AdditionalImports  []string
 }
 
 // Variant describes an enum variant.

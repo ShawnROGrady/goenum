@@ -20,6 +20,7 @@ func main() {
 		typeName             = flag.String("type", "", "name of the type to generate enum boilerplate for")
 		defaultAsEmptyString = flag.Bool("default-as-empty-string", false, "treat the default value as an empty string")
 		output               = flag.String("o", "", "file to write output to; defaults to stdout")
+		implSqlMethods       = flag.Bool("sql", false, "impl sql.Scanner and sql.driver.Value")
 	)
 
 	flag.Parse()
@@ -53,6 +54,10 @@ func main() {
 	var generatorOpts []goenum.GeneratorOpt
 	if *defaultAsEmptyString {
 		generatorOpts = append(generatorOpts, goenum.WithDefaultAsEmptyString())
+	}
+	if *implSqlMethods {
+		generatorOpts = append(generatorOpts, goenum.ImplSqlScanner())
+		generatorOpts = append(generatorOpts, goenum.ImplSqlDriverValuer())
 	}
 
 	var (

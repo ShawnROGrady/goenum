@@ -78,8 +78,25 @@ var (
 			),
 	)
 
+	implSqlScannerTemplate = template.Must(
+		template.New("implSqlScannerTemplate").
+			ParseFS(templateContents,
+				"template/impl_sql_scanner.tmpl",
+			),
+	)
+
+	implSqlDriverValuerTemplate = template.Must(
+		template.New("implSqlDriverValuerTemplate").
+			ParseFS(templateContents,
+				"template/impl_sql_driver_valuer.tmpl",
+			),
+	)
+
 	headerTemplate = template.Must(
 		template.New("headerTemplate").
+			Funcs(template.FuncMap{
+				"imports": imports,
+			}).
 			ParseFS(templateContents,
 				"template/header.tmpl",
 			),
@@ -119,6 +136,14 @@ func WriteImplTextMarshaler(w io.Writer, enumSpec *model.EnumSpec) error {
 
 func WriteImplTextUnmarshaler(w io.Writer, enumSpec *model.EnumSpec) error {
 	return implTextUnmarshalerTemplate.ExecuteTemplate(w, "impl_text_unmarshaler", enumSpec)
+}
+
+func WriteImplSqlScanner(w io.Writer, enumSpec *model.EnumSpec) error {
+	return implSqlScannerTemplate.ExecuteTemplate(w, "impl_sql_scanner", enumSpec)
+}
+
+func WriteImplSqlDriverValuer(w io.Writer, enumSpec *model.EnumSpec) error {
+	return implSqlDriverValuerTemplate.ExecuteTemplate(w, "impl_sql_driver_valuer", enumSpec)
 }
 
 func WriteHeader(w io.Writer, enumSpec *model.EnumSpec) error {

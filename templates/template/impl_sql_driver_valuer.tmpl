@@ -1,0 +1,4 @@
+{{define `impl_sql_driver_valuer`}}func (e {{.Name}}) Value() (driver.Value, error) {
+	return e.String(), nil
+}
+{{end}}

@@ -9,11 +9,40 @@ import (
 )
 
 type Generator struct {
-	spec *model.EnumSpec
+	spec                *model.EnumSpec
+	implSqlScanner      bool
+	implSqlDriverValuer bool
 }
 
-func New(spec *model.EnumSpec) *Generator {
-	return &Generator{spec: spec}
+type Opt interface {
+	apply(*Generator)
+}
+
+type optFn func(*Generator)
+
+func (fn optFn) apply(g *Generator) {
+	fn(g)
+}
+
+func ImplSqlScanner() Opt {
+	return optFn(func(g *Generator) {
+		g.implSqlScanner = true
+	})
+}
+
+func ImplSqlDriverValuer() Opt {
+	return optFn(func(g *Generator) {
+		g.implSqlDriverValuer = true
+	})
+}
+
+func New(spec *model.EnumSpec, opts ...Opt) *Generator {
+	g := &Generator{spec: spec}
+	for _, opt := range opts {
+		opt.apply(g)
+	}
+
+	return g
 }
 
 func (g *Generator) writeEnumNames(dst io.Writer) error {
@@ -79,6 +108,22 @@ func (g *Generator) writeImplTextUnmarshaler(dst io.Writer) error {
 	return nil
 }
 
+func (g *Generator) writeImplSqlScanner(dst io.Writer) error {
+	if err := templates.WriteImplSqlScanner(dst, g.spec); err != nil {
+		return fmt.Errorf("writeImplSqlScanner: %w", err)
+	}
+
+	return nil
+}
+
+func (g *Generator) writeImplSqlDriverValuer(dst io.Writer) error {
+	if err := templates.WriteImplSqlDriverValuer(dst, g.spec); err != nil {
+		return fmt.Errorf("writeImplSqlDriverValuer: %w", err)
+	}
+
+	return nil
+}
+
 func (g *Generator) writeHeader(dst io.Writer) error {
 	if err := templates.WriteHeader(dst, g.spec); err != nil {
 		return fmt.Errorf("writeHeader: %w", err)
@@ -114,6 +159,13 @@ func (g *Generator) Generate(dst io.Writer) error {
 		g.writeFromString,
 		g.writeImplTextMarshaler,
 		g.writeImplTextUnmarshaler,
+	}
+
+	if g.implSqlScanner {
+		fns = append(fns, g.writeImplSqlScanner)
+	}
+	if g.implSqlDriverValuer {
+		fns = append(fns, g.writeImplSqlDriverValuer)
 	}
 
 	for i, fn := range fns {
